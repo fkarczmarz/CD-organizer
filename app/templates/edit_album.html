@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Album</title>
+</head>
+<body>
+    <h1>Edit Album</h1>
+    <form action="/edit_album/{{ album.id }}" method="POST">
+        <label for="title">Title:</label><br>
+        <input type="text" id="title" name="title" value="{{ album.title }}" required><br><br>
+
+        <label for="artist">Artist:</label><br>
+        <input type="text" id="artist" name="artist" value="{{ album.artist }}" required><br><br>
+
+        <label for="year">Year:</label><br>
+        <input type="number" id="year" name="year" value="{{ album.year }}" required><br><br>
+
+        <button type="submit">Save Changes</button>
+    </form>
+</body>
+</html>

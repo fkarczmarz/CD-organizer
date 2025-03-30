@@ -14,6 +14,7 @@
                 <th>Title</th>
                 <th>Artist</th>
                 <th>Year</th>
+                <th>Actions</th> <!-- Kolumna na akcje -->
             </tr>
         </thead>
         <tbody>
@@ -23,6 +24,18 @@
                 <td>{{ album.title }}</td>
                 <td>{{ album.artist }}</td>
                 <td>{{ album.year }}</td>
+                <!-- Akcje: Edytuj i Usuń -->
+                <td>
+                    <!-- Przycisk "Edytuj" -->
+                    <a href="/edit_album/{{ album.id }}">
+                        <button type="button">Edit</button>
+                    </a>
+
+                    <!-- Formularz "Usuń" -->
+                    <form action="/delete_album/{{ album.id }}" method="POST" style="display:inline;">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

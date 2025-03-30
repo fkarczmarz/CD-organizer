@@ -30,6 +30,38 @@ def add_album_view():
             session.close()
     return render_template('add_album.html')
 
+@app.route('/edit_album/<int:album_id>', methods=['GET', 'POST'])
+def edit_album_view(album_id):
+    session = SessionLocal()
+    album = session.query(Album).filter(Album.id == album_id).first()
+    if request.method == 'POST':
+        try:
+            album.title = request.form['title']
+            album.artist = request.form['artist']
+            album.year = request.form['year']
+            session.commit()
+            return redirect('/albums')
+        except Exception as e:
+            session.rollback()
+            return f"Error: {str(e)}"
+        finally:
+            session.close()
+    return render_template('edit_album.html', album=album)
+
+@app.route('/delete_album/<int:album_id>', methods=['POST'])
+def delete_album(album_id):
+    session = SessionLocal()
+    try:
+        album = session.query(Album).filter(Album.id == album_id).first()
+        session.delete(album)
+        session.commit()
+        return redirect('/albums')
+    except Exception as e:
+        session.rollback()
+        return f"Error: {str(e)}"
+    finally:
+        session.close()
+
 @app.route('/albums')
 def albums_view():
     session = SessionLocal()
