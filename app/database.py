@@ -1,6 +1,9 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from app.database import init_db
+
+init_db()
 
 Base = declarative_base()
 engine = create_engine('sqlite:///cd_organizer.db')
