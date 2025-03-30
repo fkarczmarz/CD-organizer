@@ -1,54 +1,46 @@
-from flask import Flask, request, jsonify
-from app.database import init_db, SessionLocal  # <-- Zmiana z `app.database` na `.database`
+from flask import Flask, render_template, request, redirect, jsonify
+from app.database import init_db, SessionLocal
 from app.models.album import Album
 
 app = Flask(__name__)
 init_db()
 
-
 @app.route('/')
 def home():
-    return "Welcome to the CD Organizer!"
+    return render_template('index.html')
 
-# Dodawanie nowej płyty CD
-@app.route('/add', methods=['POST'])
-def add_album():
-    session = SessionLocal()  # Otwieramy sesję bazy danych
-    data = request.json  # Pobieramy dane z żądania POST
+@app.route('/add_album', methods=['GET', 'POST'])
+def add_album_view():
+    if request.method == 'POST':
+        session = SessionLocal()
+        try:
+            # Pobieramy dane z formularza
+            new_album = Album(
+                title=request.form['title'],
+                artist=request.form['artist'],
+                year=request.form['year']
+            )
+            session.add(new_album)
+            session.commit()
+            return redirect('/albums')  # Przekierowanie na stronę z listą płyt
+        except Exception as e:
+            session.rollback()
+            return f"Error: {str(e)}"
+        finally:
+            session.close()
+    return render_template('add_album.html')
+
+@app.route('/albums')
+def albums_view():
+    session = SessionLocal()
     try:
-        # Tworzymy nowy obiekt Album
-        new_album = Album(
-            title=data['title'],
-            artist=data['artist'],
-            year=data['year']
-        )
-        session.add(new_album)  # Dodajemy album do sesji
-        session.commit()  # Zapisujemy zmiany w bazie danych
-        return jsonify({"message": "Album added successfully!"}), 201
-    except Exception as e:
-        session.rollback()  # Cofamy zmiany w razie błędu
-        return jsonify({"error": str(e)}), 400
-    finally:
-        session.close()  # Zamykamy sesję
-
-
-# Wyświetlanie wszystkich płyt CD
-@app.route('/albums', methods=['GET'])
-def get_albums():
-    session = SessionLocal()  # Otwieramy sesję bazy danych
-    try:
-        # Pobieramy wszystkie rekordy z tabeli albums
+        # Pobieramy wszystkie płyty z bazy danych
         albums = session.query(Album).all()
-        # Tworzymy listę albumów w formacie JSON
-        result = [
-            {"id": album.id, "title": album.title, "artist": album.artist, "year": album.year}
-            for album in albums
-        ]
-        return jsonify(result), 200
+        return render_template('albums.html', albums=albums)
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        return f"Error: {str(e)}"
     finally:
-        session.close()  # Zamykamy sesję
+        session.close()
 
 if __name__ == '__main__':
     app.run(debug=True)

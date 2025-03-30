@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Album</title>
+</head>
+<body>
+    <h1>Add a New CD</h1>
+    <form action="/add_album" method="POST">
+        <label for="title">Title:</label><br>
+        <input type="text" id="title" name="title" required><br><br>
+
+        <label for="artist">Artist:</label><br>
+        <input type="text" id="artist" name="artist" required><br><br>
+
+        <label for="year">Year:</label><br>
+        <input type="number" id="year" name="year" required><br><br>
+
+        <button type="submit">Add CD</button>
+    </form>
+</body>
+</html>
