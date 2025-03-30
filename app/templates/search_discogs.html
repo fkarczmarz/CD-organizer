@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Discogs</title>
+</head>
+<body>
+    <h1>Search for Albums on Discogs</h1>
+    <form action="/search_discogs" method="POST">
+        <label for="query">Enter album title or artist:</label><br>
+        <input type="text" id="query" name="query" 
+       value="{{ default_query }}" required>
+
+        <button type="submit">Search</button>
+    </form>
+
+    <a href="/">Go back to home page</a>
+</body>
+</html>

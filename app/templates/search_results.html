@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Discogs Search Results</title>
+</head>
+<script>
+    document.querySelectorAll('a[href^="/add_album_from_discogs"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const loading = document.getElementById('loading');
+            loading.style.display = 'block';
+            
+            fetch(e.target.href)
+                .then(response => {
+                    if (response.ok) {
+                        window.location.reload();  # Odśwież po dodaniu
+                    }
+                });
+        });
+    });
+    </script>
+<body>
+    <h1>Search Results</h1>
+    {% if query %}
+<h2>Results for: "{{ query }}"</h2>
+{% endif %}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Artist</th>
+                <th>Year</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for album in albums %}
+            <tr>
+                <td>{{ album.title }}</td>
+                <td>{{ album.artist }}</td>
+                <td>{{ album.year }}</td>
+                <td>
+                    {% if album.is_added %}
+                        ✅ Added
+                    {% else %}
+                        <a href="/add_album_from_discogs/{{ album.id }}">Add to Collection</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div style="margin-top: 20px;">
+        <a href="/search_discogs?refresh=1">
+            <button>New Search</button>
+        </a>
+        <a href="/">
+            <button>Home</button>
+        </a>
+    </div>
+    
+</body>
+</html>

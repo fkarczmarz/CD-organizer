@@ -8,3 +8,4 @@ class Album(Base):
     title = Column(String)
     artist = Column(String)
     year = Column(Integer)
+    discogs_id = Column(Integer, unique=True)  # Nowe pole
