@@ -6,7 +6,10 @@
 </head>
 <body>
     <h1>Edit Album</h1>
-    <form action="/edit_album/{{ album.id }}" method="POST">
+    
+    <!-- Dodajemy enctype dla przesyłania plików -->
+    <form action="/edit_album/{{ album.id }}" method="POST" enctype="multipart/form-data">
+        <!-- Istniejące pola -->
         <label for="title">Title:</label><br>
         <input type="text" id="title" name="title" value="{{ album.title }}" required><br><br>
 
@@ -15,8 +18,30 @@
 
         <label for="year">Year:</label><br>
         <input type="number" id="year" name="year" value="{{ album.year }}" required><br><br>
+        
+        <!-- Nowe pola dla dodatkowych kategorii -->
+        <label for="genre">Genre:</label><br>
+        <input type="text" id="genre" name="genre" value="{{ album.genre }}"><br><br>
+        
+        <label for="country">Country:</label><br>
+        <input type="text" id="country" name="country" value="{{ album.country }}"><br><br>
+        
+        <label for="format">Format:</label><br>
+        <input type="text" id="format" name="format" value="{{ album.format }}"><br><br>
+        
+        <!-- Aktualne zdjęcie (jeśli istnieje) -->
+        {% if album.cover_url %}
+        <p>Current cover image:</p>
+        <img src="{{ album.cover_url }}" alt="Album Cover" width="100"><br><br>
+        {% endif %}
+        
+        <!-- Pole do przesyłania nowego zdjęcia -->
+        <label for="cover_image">Upload new cover image:</label><br>
+        <input type="file" id="cover_image" name="cover_image" accept="image/*"><br><br>
 
         <button type="submit">Save Changes</button>
     </form>
+    
+    <a href="/albums">Cancel</a>
 </body>
 </html>

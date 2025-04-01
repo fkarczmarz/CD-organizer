@@ -3,48 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <title>Discogs Search Results</title>
+    <style>
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+    </style>
 </head>
-<script>
-    document.querySelectorAll('a[href^="/add_album_from_discogs"]').forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const loading = document.getElementById('loading');
-            loading.style.display = 'block';
-            
-            fetch(e.target.href)
-                .then(response => {
-                    if (response.ok) {
-                        window.location.reload();  # Odśwież po dodaniu
-                    }
-                });
-        });
-    });
-    </script>
 <body>
     <h1>Search Results</h1>
-    {% if query %}
-<h2>Results for: "{{ query }}"</h2>
-{% endif %}
+
     <table border="1">
         <thead>
             <tr>
+                <th>Cover</th>
                 <th>Title</th>
                 <th>Artist</th>
                 <th>Year</th>
+                <th>Genre</th>
+                <th>Country</th>
+                <th>Format</th>
                 <th>Status</th>
             </tr>
         </thead>
         <tbody>
             {% for album in albums %}
             <tr>
+                <td>
+                    {% if album.cover_url %}
+                    <img src="{{ album.cover_url }}" alt="Cover" width="100">
+                    {% else %}
+                    No Cover Available
+                    {% endif %}
+                </td>
                 <td>{{ album.title }}</td>
                 <td>{{ album.artist }}</td>
                 <td>{{ album.year }}</td>
-                <td>
+                <td>{{ album.genre }}</td>
+                <td>{{ album.country }}</td>
+                <td>{{ album.format }}</td>
+                <td class="status-cell">
                     {% if album.is_added %}
                         ✅ Added
                     {% else %}
-                        <a href="/add_album_from_discogs/{{ album.id }}">Add to Collection</a>
+                        <a href="/add_album_from_discogs/{{ album.id }}" class="add-button">Add to Collection</a>
                     {% endif %}
                 </td>
             </tr>
@@ -53,13 +63,44 @@
     </table>
 
     <div style="margin-top: 20px;">
-        <a href="/search_discogs?refresh=1">
-            <button>New Search</button>
-        </a>
-        <a href="/">
-            <button>Home</button>
-        </a>
+        <a href="/search_discogs?refresh=1"><button>New Search</button></a>
+        <a href="/albums"><button>Go to Collection</button></a>
     </div>
-    
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Obsługa przycisków dodawania
+        document.querySelectorAll('.add-button').forEach(button => {
+            button.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const cell = e.target.closest('.status-cell');
+                const originalText = e.target.textContent;
+                
+                // Zmień stan przycisku
+                e.target.textContent = 'Adding...';
+                e.target.style.pointerEvents = 'none';
+                
+                try {
+                    const response = await fetch(e.target.href);
+                    const data = await response.json();
+                    
+                    if(data.status === 'success') {
+                        cell.innerHTML = '<span class="success">✅ Added!</span>';
+                    } else {
+                        cell.innerHTML = `
+                            <span class="error">❌ Error! 
+                                <button onclick="location.reload()">Retry</button>
+                            </span>`;
+                    }
+                } catch (error) {
+                    cell.innerHTML = `
+                        <span class="error">⚠️ Connection Error 
+                            <button onclick="location.reload()">Retry</button>
+                        </span>`;
+                }
+            });
+        });
+    });
+    </script>
 </body>
 </html>

@@ -2,36 +2,46 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Albums List</title>
+    <title>Your Collection</title>
 </head>
 <body>
-    <h1>List of CDs</h1>
+    <h1>Your CD Collection</h1>
+
     <table border="1">
         <thead>
             <tr>
-                <th>ID</th>
+                <th>Cover</th>
                 <th>Title</th>
                 <th>Artist</th>
                 <th>Year</th>
-                <th>Actions</th> <!-- Kolumna na akcje -->
+                <th>Genre</th>
+                <th>Country</th>
+                <th>Format</th>
+                <th>Actions</th> <!-- Dodana kolumna na akcje -->
             </tr>
         </thead>
         <tbody>
             {% for album in albums %}
             <tr>
-                <td>{{ album.id }}</td>
+                <!-- Wyświetlanie okładki -->
+                <td>
+                    {% if album.cover_url %}
+                    <img src="{{ album.cover_url }}" alt="Cover" width="100">
+                    {% else %}
+                    No Cover Available
+                    {% endif %}
+                </td>
                 <td>{{ album.title }}</td>
                 <td>{{ album.artist }}</td>
                 <td>{{ album.year }}</td>
-                <!-- Akcje: Edytuj i Usuń -->
+                <td>{{ album.genre }}</td>
+                <td>{{ album.country }}</td>
+                <td>{{ album.format }}</td>
+                <!-- Dodane przyciski edycji i usuwania -->
                 <td>
-                    <!-- Przycisk "Edytuj" -->
                     <a href="/edit_album/{{ album.id }}">
                         <button type="button">Edit</button>
                     </a>
-
-                    <!-- Formularz "Usuń" -->
                     <form action="/delete_album/{{ album.id }}" method="POST" style="display:inline;">
                         <button type="submit">Delete</button>
                     </form>
@@ -41,6 +51,7 @@
         </tbody>
     </table>
 
-    <a href="/">Go back to home page</a>
+    <a href="/">Go back to home page</a><br><br>
+
 </body>
 </html>
