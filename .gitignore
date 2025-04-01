@@ -1,1 +1,4 @@
 static/covers/
+cd_organizer.db
+__pycache__/
+static/covers/
